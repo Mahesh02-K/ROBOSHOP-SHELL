@@ -59,7 +59,7 @@ curl -o /tmp/user.zip https://roboshop-artifacts.s3.amazonaws.com/user-v3.zip
 VALIDATE $? "Downloading user"
 
 rm -rf /app/*
-cd /app
+cd /app 
 unzip /tmp/user.zip &>>$LOG_FILE
 VALIDATE $? "unzipping user"
 
