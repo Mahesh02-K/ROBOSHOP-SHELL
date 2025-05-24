@@ -81,7 +81,7 @@ VALIDATE $? "Starting shipping"
 dnf install mysql -y &>>$LOG_FILE
 VALIDATE $? "Installing mysql"
 
-mysql -h mysql.kakuturu.store -u root -p$MYSQL_ROOT_PASSWORD -e 'use cities' &>>$LOG_FILE
+mysql -h mysql.kakuturu.store -u root -p$MYSQL_ROOT_PASSWORD -e 'use db' cities &>>$LOG_FILE
 if [ $? -ne 0 ]
 then
     mysql -h mysql.kakuturu.store -uroot -p$MYSQL_ROOT_PASSWORD < /app/db/schema.sql &>>$LOG_FILE
