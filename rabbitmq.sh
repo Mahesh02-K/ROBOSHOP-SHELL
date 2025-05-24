@@ -40,17 +40,17 @@ Validate(){
 cp rabbitmq.repo /etc/yum.repos.d/rabbitmq.repo 
 Validate $? "Copying rabbitmq"
 
-dnf install rabbitmq-server -y >>&$LOG_FILE
+dnf install rabbitmq-server -y &>>$LOG_FILE
 Validate $? "Installing rabbitmq server"
 
-systemctl enable rabbitmq-server >>&$LOG_FILE
+systemctl enable rabbitmq-server &>>$LOG_FILE
 Validate $? "Enabling rabbitmq"
 
-systemctl start rabbitmq-server >>&$LOG_FILE
+systemctl start rabbitmq-server &>>$LOG_FILE
 Validate $? "Starting rabbitmq"
 
-rabbitmqctl add_user roboshop $RABBITMQ_PASSWD >>&$LOG_FILE
-rabbitmqctl set permissions -p / roboshop ".*" ".*" ".*" >>&$LOG_FILE
+rabbitmqctl add_user roboshop $RABBITMQ_PASSWD &>>$LOG_FILE
+rabbitmqctl set permissions -p / roboshop ".*" ".*" ".*" &>>$LOG_FILE
 
 END_TIME=$(date +%s)
 TOTAL_TIME=$(( $END_TIME - $START_TIME ))
