@@ -41,7 +41,7 @@ cp rabbitmq.repo /etc/yum.repos.d/rabbitmq.repo
 Validate $? "Copying rabbitmq"
 
 dnf install rabbitmq-server -y >>&$LOG_FILE
-Validate $? "Installing rabbitmq"
+Validate $? "Installing rabbitmq server"
 
 systemctl enable rabbitmq-server >>&$LOG_FILE
 Validate $? "Enabling rabbitmq"
