@@ -82,15 +82,21 @@ VALIDATE $? "Starting Shipping"
 dnf install mysql -y  &>>$LOG_FILE
 VALIDATE $? "Install MySQL"
 
-mysql -h mysql.kakuturu.store -u root -p$MYSQL_ROOT_PASSWORD -e 'use cities' &>>$LOG_FILE
-if [ $? -ne 0 ]
-then
-    mysql -h mysql.kakuturu.store -uroot -p$MYSQL_ROOT_PASSWORD < /app/db/schema.sql &>>$LOG_FILE
-    mysql -h mysql.kakuturu.store -uroot -p$MYSQL_ROOT_PASSWORD < /app/db/app-user.sql  &>>$LOG_FILE
-    mysql -h mysql.kakuturu.store -uroot -p$MYSQL_ROOT_PASSWORD < /app/db/master-data.sql &>>$LOG_FILE
-    VALIDATE $? "Loading data into MySQL"
+DB_EXISTS=$(mysql -h mysql.kakuturu.store -u root -p$MYSQL_ROOT_PASSWORD -sse "SHOW DATABASES LIKE 'cities';")
+if [ "$DB_EXISTS" != "cities" ]; then
+    mysql -h mysql.kakuturu.store -u root -p$MYSQL_ROOT_PASSWORD -e 'CREATE DATABASE cities;' &>> "$LOG_FILE"
+    VALIDATE $? "Creating cities database"
+
+    mysql -h mysql.kakuturu.store -u root -p$MYSQL_ROOT_PASSWORD cities < /app/db/schema.sql &>> "$LOG_FILE"
+    VALIDATE $? "Loading schema.sql"
+
+    mysql -h mysql.kakuturu.store -u root -p$MYSQL_ROOT_PASSWORD cities < /app/db/app-user.sql &>> "$LOG_FILE"
+    VALIDATE $? "Loading app-user.sql"
+
+    mysql -h mysql.kakuturu.store -u root -p$MYSQL_ROOT_PASSWORD cities < /app/db/master-data.sql &>> "$LOG_FILE"
+    VALIDATE $? "Loading master-data.sql"
 else
-    echo -e "Data is already loaded into MySQL ... $Y SKIPPING $N"
+    echo -e "Database data is $Y already loaded $N, skipping..." | tee -a "$LOG_FILE"
 fi
 
 systemctl restart shipping &>>$LOG_FILE
